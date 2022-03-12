@@ -195,7 +195,7 @@ class WatchListAV(APIView):
         return Response(serializer.data)
     #
     #test_param = openapi.Parameter('test', openapi.IN_QUERY, description="test manual param", type=openapi.TYPE_BOOLEAN)
-    @swagger_auto_schema(request_body=WatchListSerializer)
+    @swagger_auto_schema(request_body=WatchListSerializer,responses={'200':'Success'})
     def post(self, request, *args, **kwargs):
         serializer=WatchListSerializer(data=request.data)
         if serializer.is_valid():

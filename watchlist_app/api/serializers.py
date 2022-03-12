@@ -14,6 +14,8 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 class WatchListSerializer(serializers.ModelSerializer):
     len_title=serializers.SerializerMethodField()
+    avg_rating=serializers.IntegerField(read_only=True)
+    number_rating=serializers.FloatField(read_only=True)
     #reviews=ReviewSerializer(many=True,read_only=True)
     platform=serializers.CharField(source='platform.name')
     class Meta:
@@ -22,6 +24,16 @@ class WatchListSerializer(serializers.ModelSerializer):
     
     def get_len_title(self, obj):
         return len(obj.title)
+    
+    def create(self, validated_data):
+        platformname = validated_data['platform']
+        del validated_data['platform']
+        platform=StreamPlatform.objects.get(name=platformname['name'])
+        validated_data.update({'platform':platform})
+        return WatchList.objects.create(**validated_data)
+    
+
+
     
 class StreamPlatformSerializer(serializers.ModelSerializer):
     watchlist= WatchListSerializer(many=True, read_only=True)
