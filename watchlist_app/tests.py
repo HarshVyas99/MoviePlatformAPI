@@ -141,6 +141,6 @@ class ReviewTestCase(APITestCase):
         self.assertEquals(response.status_code,status.HTTP_200_OK)        
 
     def test_review_user(self):
-        response=self.client.get('/watch/'+str(self.watch.id)+'/reviews-list/?review_user__username',args=(self.user.username))
+        response=self.client.get('/watch/movie/'+str(self.watch.id)+'/reviews-list/?review_user__username',args=(self.user.username))
         
         self.assertEquals(response.status_code,status.HTTP_200_OK)

@@ -18,6 +18,9 @@ from rest_framework.throttling import UserRateThrottle,AnonRateThrottle
 from rest_framework.permissions import IsAuthenticated,IsAuthenticatedOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from django.utils.decorators import method_decorator
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 
 
 from django.shortcuts import get_object_or_404
@@ -122,6 +125,9 @@ class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
 #     def get(self, request, *args, **kwargs):
 #         return self.retrieve(request, *args, **kwargs)
 
+@method_decorator(name='list', decorator=swagger_auto_schema(
+    operation_description="Stream Platform Description from swagger_auto_schema via method_decorator"
+))
 class StreamPlatformViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminorReadOnly]
     queryset = StreamPlatform.objects.all()
@@ -182,12 +188,14 @@ class StreamPlatformDetailAV(APIView):
 
 class WatchListAV(APIView):
     permission_classes = [IsAdminorReadOnly]
-    
+    @swagger_auto_schema(responses={200: WatchListSerializer(many=True)})
     def get(self, request, *args, **kwargs):
         Watchlist=WatchList.objects.all()
         serializer=WatchListSerializer(Watchlist,many=True)
         return Response(serializer.data)
-    
+    #
+    #test_param = openapi.Parameter('test', openapi.IN_QUERY, description="test manual param", type=openapi.TYPE_BOOLEAN)
+    @swagger_auto_schema(request_body=WatchListSerializer)
     def post(self, request, *args, **kwargs):
         serializer=WatchListSerializer(data=request.data)
         if serializer.is_valid():
